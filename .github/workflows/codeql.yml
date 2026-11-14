@@ -1,0 +1,70 @@
+# Advanced Code Scanning (CodeQL) — fleet security standard.
+# security-extended + security-and-quality strictly subsumes the default suite
+# and the extended suite. Matrix covers every language this repository has
+# (Java via the Gradle Android build). The repository's own suite (build.yml)
+# stays wired in CI beside this workflow.
+name: CodeQL Advanced
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  schedule:
+    - cron: "32 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      # required for all features
+      security-events: write
+      # only required for workflows in private repositories
+      contents: read
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [java-kotlin]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: "21"
+          distribution: temurin
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: build-tools;36.0.0
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-extended,security-and-quality
+
+      - name: Build debug APK (traced by CodeQL)
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{ matrix.language }}"
