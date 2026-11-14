@@ -229,6 +229,14 @@ public final class StringUtils {
     @NonNull
     public static String sanitizeForLog(@Nullable String s) {
         if (s == null) return "";
-        return s.replaceAll("[\\p{Cntrl}\\n\\r\\t]", " ");
+        var sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            // Replace control characters (newline, CR, tab, ESC, ...) with a
+            // space so a crafted config name cannot forge extra log entries.
+            if (c < 0x20 || c == 0x7f) sb.append(' ');
+            else sb.append(c);
+        }
+        return sb.toString();
     }
 }
