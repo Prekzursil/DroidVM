@@ -121,6 +121,7 @@ public final class NativeProcess extends Process implements Closeable {
     }
 
     @Override
+    @Override
     public int exitValue() {
         if (!isFinished())
             throw new IllegalThreadStateException("Process has not exited");
@@ -145,11 +146,13 @@ public final class NativeProcess extends Process implements Closeable {
     }
 
     @Override
+    @Override
     public void destroy() {
         if (!isFinished())
             nativeKill(pid, 15);
     }
 
+    @Override
     @Override
     public NativeProcess destroyForcibly() {
         if (!isFinished())

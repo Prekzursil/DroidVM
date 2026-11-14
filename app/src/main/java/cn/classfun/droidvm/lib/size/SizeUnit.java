@@ -98,6 +98,7 @@ public enum SizeUnit implements StringEnum {
     }
 
     @NonNull
+    @Override
     public String getString() {
         if (this == B) return "B";
         return fmt("%ciB", name().charAt(0));

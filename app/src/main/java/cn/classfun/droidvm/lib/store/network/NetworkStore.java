@@ -2,6 +2,7 @@ package cn.classfun.droidvm.lib.store.network;
 
 import android.content.Context;
 import android.util.Log;
+import cn.classfun.droidvm.lib.utils.StringUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,7 +44,7 @@ public final class NetworkStore extends DataStore<NetworkConfig> {
                 var migrated = NetworkConfig.migrate(entry);
                 if (migrated == null) {
                     Log.w(TAG, "Skipping network config with unsupported schema: "
-                        + entry.optString("name"));
+                        + StringUtils.sanitizeForLog(entry.optString("name")));
                     return;
                 }
                 if (migrated == entry) { // already current schema
@@ -59,7 +60,7 @@ public final class NetworkStore extends DataStore<NetworkConfig> {
                     NetworkConfigValidator.validate(cfg);
                 } catch (Exception e) {
                     Log.w(TAG, "Skipping legacy network that failed migration/validation: "
-                        + entry.optString("name"), e);
+                        + StringUtils.sanitizeForLog(entry.optString("name")), e);
                     return;
                 }
                 store.add(cfg);

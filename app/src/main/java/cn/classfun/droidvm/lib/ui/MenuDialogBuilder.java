@@ -31,6 +31,7 @@ public final class MenuDialogBuilder extends MaterialAlertDialogBuilder {
     }
 
     @NonNull
+    @Override
     @SuppressWarnings("UnusedReturnValue")
     public MenuDialogBuilder setTitle(@StringRes int titleRes) {
         return (MenuDialogBuilder) super.setTitle(titleRes);
@@ -38,12 +39,14 @@ public final class MenuDialogBuilder extends MaterialAlertDialogBuilder {
 
 
     @NonNull
+    @Override
     @SuppressWarnings("UnusedReturnValue")
     public MenuDialogBuilder setTitle(@Nullable CharSequence title) {
         return (MenuDialogBuilder) super.setTitle(title);
     }
 
     @NonNull
+    @Override
     @SuppressWarnings("UnusedReturnValue")
     public MenuDialogBuilder setIcon(int iconId) {
         this.iconDrawable = AppCompatResources.getDrawable(context, iconId);
@@ -51,6 +54,7 @@ public final class MenuDialogBuilder extends MaterialAlertDialogBuilder {
     }
 
     @NonNull
+    @Override
     @SuppressWarnings("UnusedReturnValue")
     public MenuDialogBuilder setIcon(Drawable iconDrawable) {
         this.iconDrawable = iconDrawable;
@@ -89,13 +93,11 @@ public final class MenuDialogBuilder extends MaterialAlertDialogBuilder {
     private ListAdapter createMenuAdapter(@NonNull Menu menu) {
         var names = new ArrayList<String>();
         var icons = new ArrayList<Drawable>();
-        var ids = new ArrayList<Integer>();
         boolean hasIcons = false;
         for (int i = 0; i < menu.size(); i++) {
             var item = menu.getItem(i);
             var t = item.getTitle();
             names.add(t != null ? t.toString() : "");
-            ids.add(item.getItemId());
             if (iconDrawable == null) {
                 var icon = item.getIcon();
                 icons.add(icon);

@@ -39,6 +39,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.io.File;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -262,7 +263,7 @@ public final class ImportURLActivity extends AppCompatActivity {
         cardInfo.setVisibility(GONE);
         executor.submit(() -> {
             try {
-                var conn = (HttpURLConnection) new URL(urlStr).openConnection();
+                var conn = (HttpURLConnection) URI.create(urlStr).toURL().openConnection();
                 conn.setRequestMethod("HEAD");
                 conn.setConnectTimeout(15000);
                 conn.setReadTimeout(15000);
@@ -340,6 +341,12 @@ public final class ImportURLActivity extends AppCompatActivity {
             return;
         }
         inputFolder.setError(null);
+        // Reject path traversal in the chosen file name: it must denote a
+        // single path segment inside the chosen folder, never escape it.
+        if (name.contains("/") || name.contains("\\") || name.contains("..")) {
+            inputFilename.setError(getString(R.string.import_url_error_name_invalid));
+            return;
+        }
         var destPath = pathJoin(folder, name);
         if (new File(destPath).exists()) {
             inputFilename.setError(getString(R.string.import_url_error_file_exists));

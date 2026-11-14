@@ -131,6 +131,7 @@ public final class MainVMFragment
             if (adapter != null)
                 adapter.updateState(vmId, state);
             if (state == VMState.RUNNING && wantOpenConsole.compareAndSet(true, false)) {
+                if (adapter == null) return;
                 var config = adapter.items.findById(vmId);
                 if (config == null) return;
                 var intent = new Intent(requireContext(), VMConsoleActivity.class);

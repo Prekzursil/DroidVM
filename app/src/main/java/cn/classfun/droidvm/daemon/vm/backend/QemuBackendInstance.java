@@ -157,6 +157,9 @@ public final class QemuBackendInstance extends VMBackendInstance {
             case PROTECTED_WITHOUT_FIRMWARE:
                 machine += ",confidential-guest-support=prot0";
                 break;
+            default:
+                // non-protected modes need no machine flag
+                break;
         }
         args.add(machine);
         args.add("-cpu");
@@ -180,6 +183,9 @@ public final class QemuBackendInstance extends VMBackendInstance {
                 long swiotlbMb = Math.max(item.optLong("swiotlb_mb", 64), 1);
                 args.add("-object");
                 args.add(fmt("arm-confidential-guest,id=prot0,swiotlb-size=%dM", swiotlbMb));
+                break;
+            default:
+                // non-protected modes need no confidential-guest object
                 break;
         }
         var boot = BootPlan.of(config);
@@ -348,6 +354,9 @@ public final class QemuBackendInstance extends VMBackendInstance {
                     break;
                 case ALWAYS:
                     fsArg.append(",writeout=immediate,fmode=0644,dmode=0755");
+                    break;
+                default:
+                    // AUTO keeps QEMU's default writeout policy
                     break;
             }
             if (dir.optBoolean("readonly", false))

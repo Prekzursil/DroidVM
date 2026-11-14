@@ -258,7 +258,7 @@ public final class VMNicConfig {
             copy.remove("dhcp4_lease");
             dropped.add("DHCPv4 static lease");
         } else if (sane.isDhcp4LeaseEnabled() && !sane.getDhcp4Forwards().isEmpty()
-            && !vlan.isIpv4Snat()) {
+            && (vlan == null || !vlan.isIpv4Snat())) {
             dropForwards(copy, "dhcp4_lease");
             dropped.add("IPv4 port forwards (network has no IPv4 SNAT)");
         }
@@ -266,7 +266,8 @@ public final class VMNicConfig {
             copy.remove("dhcp6_lease");
             dropped.add("DHCPv6 static lease");
         } else if (sane.isDhcp6LeaseEnabled() && !sane.getDhcp6Forwards().isEmpty()
-            && (!vlan.isIpv6Snat() || network.getBridgeType() != BridgeType.GVISOR)) {
+            && (vlan == null || !vlan.isIpv6Snat()
+                || network.getBridgeType() != BridgeType.GVISOR)) {
             dropForwards(copy, "dhcp6_lease");
             dropped.add("IPv6 port forwards (require a gVisor network)");
         }

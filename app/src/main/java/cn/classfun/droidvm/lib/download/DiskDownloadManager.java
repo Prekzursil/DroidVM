@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -279,7 +280,7 @@ public final class DiskDownloadManager {
         // Re-resolve the redirect each attempt so a flaky mirror can be swapped
         // out (the server load-balances), like re-running `curl -L`.
         var url = resolveFinalUrl(d.url, d.userAgent);
-        var conn = (HttpURLConnection) new URL(url).openConnection();
+        var conn = (HttpURLConnection) URI.create(url).toURL().openConnection();
         conn.setConnectTimeout(CONNECT_TIMEOUT_MS);
         conn.setReadTimeout(READ_TIMEOUT_MS);
         conn.setInstanceFollowRedirects(true);
@@ -399,7 +400,7 @@ public final class DiskDownloadManager {
         var current = url;
         try {
             for (int i = 0; i < 6; i++) {
-                var conn = (HttpURLConnection) new URL(current).openConnection();
+                var conn = (HttpURLConnection) URI.create(current).toURL().openConnection();
                 conn.setInstanceFollowRedirects(false);
                 conn.setConnectTimeout(CONNECT_TIMEOUT_MS);
                 conn.setReadTimeout(CONNECT_TIMEOUT_MS);
@@ -410,7 +411,7 @@ public final class DiskDownloadManager {
                     ? conn.getHeaderField("Location") : null;
                 conn.disconnect();
                 if (location == null || location.isEmpty()) break;
-                current = new URL(new URL(current), location).toString();
+                current = URI.create(current).resolve(location).toURL().toString();
             }
         } catch (Exception e) {
             Log.w(TAG, fmt("Redirect resolution failed for %s; using it as-is", url), e);

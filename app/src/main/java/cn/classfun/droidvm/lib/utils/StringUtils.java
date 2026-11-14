@@ -221,4 +221,14 @@ public final class StringUtils {
     public static String urlEncodeBytesAll(@NonNull byte[] data) {
         return urlEncodeBytesAll(data, 0, data.length);
     }
+
+    /**
+     * Strips control characters (newlines, tabs, etc.) from a string so it can
+     * be interpolated into log messages without allowing log forgery.
+     */
+    @NonNull
+    public static String sanitizeForLog(@Nullable String s) {
+        if (s == null) return "";
+        return s.replaceAll("[\p{Cntrl}\n\r\t]", " ");
+    }
 }

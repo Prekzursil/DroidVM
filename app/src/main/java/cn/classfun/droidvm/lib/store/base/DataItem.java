@@ -441,7 +441,6 @@ public final class DataItem implements JSONSerialize, Iterable<DataItem.Iter> {
         } else if (val instanceof BigDecimal) {
             return newFloat(((BigDecimal) val).doubleValue());
         } else if (val instanceof Number) {
-            var num = (Number) val;
             return newInteger(((Number) val).longValue());
         } else if (val instanceof UUID) {
             return newString(val.toString());

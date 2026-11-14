@@ -24,21 +24,25 @@ public final class IPv6Network extends IPNetwork<BigInteger, IPv6Address, IPv6Ne
     }
 
     @NonNull
+    @Override
     public IPv6Address address() {
         return address;
     }
 
+    @Override
     public int prefix() {
         return prefix;
     }
 
     @NonNull
+    @Override
     public BigInteger mask() {
         if (prefix == 0) return BigInteger.ZERO;
         return MAX_VALUE.shiftLeft(128 - prefix).and(MAX_VALUE);
     }
 
     @NonNull
+    @Override
     public IPv6Address networkAddress() {
         return new IPv6Address(address.value().and(mask()));
     }

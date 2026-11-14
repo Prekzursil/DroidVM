@@ -23,6 +23,7 @@ public final class DragTouchListener implements View.OnTouchListener {
         touchSlop = ViewConfiguration.get(ctx).getScaledTouchSlop();
     }
 
+    @Override
     public boolean onTouch(View v, @NonNull MotionEvent event) {
         float rx = event.getRawX(), ry = event.getRawY();
         switch (event.getActionMasked()) {

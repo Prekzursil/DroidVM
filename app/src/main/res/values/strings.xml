@@ -609,6 +609,7 @@
     <string name="import_url_error_name_empty">File name is required</string>
     <string name="import_url_error_folder_empty">Save folder is required</string>
     <string name="import_url_error_file_exists">File already exists</string>
+    <string name="import_url_error_name_invalid">File name must not contain path separators</string>
     <string name="import_url_success">Image \"%1$s\" added to disk list.</string>
 
     <string name="disk_operation_title">Disk Operation</string>

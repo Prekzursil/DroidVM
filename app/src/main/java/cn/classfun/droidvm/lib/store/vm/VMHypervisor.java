@@ -51,12 +51,18 @@ public enum VMHypervisor implements StringEnum {
                 case KVM:
                 case GUNYAH:
                     return true;
+                default:
+                    // other hypervisors are unsupported on QEMU
+                    break;
             } break;
             case CROSVM: switch (hypervisor) {
                 case KVM:
                 case GUNYAH:
                 case GENIEZONE:
                     return true;
+                default:
+                    // other hypervisors are unsupported on crosvm
+                    break;
             } break;
         }
         return false;
