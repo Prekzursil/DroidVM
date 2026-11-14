@@ -63,9 +63,8 @@ jobs:
           # The traced Gradle build regenerates AIDL stubs under app/build/;
           # that generated code must not be analyzed as if it were authored.
           config: |
-            paths:
-              exclude:
-                - app/build
+            paths-ignore:
+              - app/build
 
       - name: Build debug APK (traced by CodeQL)
         run: ./gradlew assembleDebug --no-daemon
