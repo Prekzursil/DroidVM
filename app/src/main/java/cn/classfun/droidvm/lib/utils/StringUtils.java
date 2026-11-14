@@ -229,6 +229,6 @@ public final class StringUtils {
     @NonNull
     public static String sanitizeForLog(@Nullable String s) {
         if (s == null) return "";
-        return s.replaceAll("[\p{Cntrl}\n\r\t]", " ");
+        return s.replaceAll("[\\p{Cntrl}\\n\\r\\t]", " ");
     }
 }
