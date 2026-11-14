@@ -317,9 +317,9 @@ public final class Repos {
                 if (name != null) item.name = (Map<String, String>) name;
                 if (region != null) item.region = region.toString();
                 if (url != null) item.url = url.toString();
-                var repos = map.get("repos");
-                if (repos instanceof Map) {
-                    var reposMap = (Map<String, Object>) repos;
+                var reposField = map.get("repos");
+                if (reposField instanceof Map) {
+                    var reposMap = (Map<String, Object>) reposField;
                     for (var re : reposMap.entrySet())
                         if (re.getValue() != null)
                             item.repoMap.put(re.getKey(), re.getValue().toString());
