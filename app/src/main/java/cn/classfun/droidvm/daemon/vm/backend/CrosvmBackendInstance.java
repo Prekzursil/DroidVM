@@ -350,6 +350,9 @@ public final class CrosvmBackendInstance extends VMBackendInstance {
                 case ANGLE:
                     gpuArg.append(",angle=true");
                     break;
+                default:
+                    // other graphics APIs need no extra flags
+                    break;
             }
             args.add("--gpu");
             args.add(gpuArg.toString());

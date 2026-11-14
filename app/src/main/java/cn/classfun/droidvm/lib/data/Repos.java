@@ -35,15 +35,15 @@ public final class Repos {
             throw new IllegalStateException("No repos found in the data");
         if (mirrorsMap == null)
             throw new IllegalStateException("No mirrors found in the data");
-        repos = new RepoList(reposMap);
-        mirrors = new MirrorList(mirrorsMap);
+        repos = new RepoList(this, reposMap);
+        mirrors = new MirrorList(this, mirrorsMap);
     }
 
     public Repos(@NonNull JSONObject json) throws JSONException {
         var reposObj = json.getJSONObject("repos");
         var mirrorsObj = json.getJSONObject("mirrors");
-        repos = new RepoList(reposObj);
-        mirrors = new MirrorList(mirrorsObj);
+        repos = new RepoList(this, reposObj);
+        mirrors = new MirrorList(this, mirrorsObj);
     }
 
     @Nullable
@@ -185,14 +185,14 @@ public final class Repos {
         }
     }
 
-    public final class RepoList extends HashMap<String, Repo> {
+    public static final class RepoList extends HashMap<String, Repo> {
         @SuppressWarnings("unchecked")
-        private RepoList(@NonNull Map<String, Object> repo) {
+        private RepoList(@NonNull Repos repos, @NonNull Map<String, Object> repo) {
             for (var entry : repo.entrySet()) {
                 var val = entry.getValue();
                 if (!(val instanceof Map)) continue;
                 var map = (Map<String, Object>) val;
-                var item = new Repo();
+                var item = repos.new Repo();
                 item.id = entry.getKey();
                 var name = map.get("name");
                 var url = map.get("url");
@@ -202,9 +202,9 @@ public final class Repos {
             }
         }
 
-        private RepoList(@NonNull JSONObject obj) throws JSONException {
+        private RepoList(@NonNull Repos repos, @NonNull JSONObject obj) throws JSONException {
             JsonUtils.forEachObject(obj, (String key, JSONObject val) -> {
-                var item = new Repo(key, val);
+                var item = repos.new Repo(key, val);
                 put(key, item);
             });
         }
@@ -302,14 +302,14 @@ public final class Repos {
         }
     }
 
-    public final class MirrorList extends HashMap<String, Mirror> {
+    public static final class MirrorList extends HashMap<String, Mirror> {
         @SuppressWarnings("unchecked")
-        private MirrorList(@NonNull Map<String, Object> mirror) {
+        private MirrorList(@NonNull Repos repos, @NonNull Map<String, Object> mirror) {
             for (var entry : mirror.entrySet()) {
                 var val = entry.getValue();
                 if (!(val instanceof Map)) continue;
                 var map = (Map<String, Object>) val;
-                var item = new Mirror();
+                var item = repos.new Mirror();
                 item.id = entry.getKey();
                 var name = map.get("name");
                 var region = map.get("region");
@@ -317,9 +317,9 @@ public final class Repos {
                 if (name != null) item.name = (Map<String, String>) name;
                 if (region != null) item.region = region.toString();
                 if (url != null) item.url = url.toString();
-                var repos = map.get("repos");
-                if (repos instanceof Map) {
-                    var reposMap = (Map<String, Object>) repos;
+                var reposField = map.get("repos");
+                if (reposField instanceof Map) {
+                    var reposMap = (Map<String, Object>) reposField;
                     for (var re : reposMap.entrySet())
                         if (re.getValue() != null)
                             item.repoMap.put(re.getKey(), re.getValue().toString());
@@ -328,9 +328,9 @@ public final class Repos {
             }
         }
 
-        private MirrorList(@NonNull JSONObject obj) throws JSONException {
+        private MirrorList(@NonNull Repos repos, @NonNull JSONObject obj) throws JSONException {
             JsonUtils.forEachObject(obj, (String key, JSONObject val) ->
-                put(key, new Mirror(key, val)));
+                put(key, repos.new Mirror(key, val)));
         }
 
         @NonNull

@@ -431,7 +431,9 @@ public final class VMNativeDisplayActivity extends AppCompatActivity {
         if (attemptsLeft > 0) {
             mainHandler.postDelayed(() -> tryShowKeyboard(imm, attemptsLeft - 1), 60);
         } else {
-            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            // toggleSoftInput is deprecated; a forced show on the already-focused
+            // editor has the same effect without the hide-when-visible toggle.
+            imm.showSoftInput(keyboardInput, InputMethodManager.SHOW_FORCED);
         }
     }
 

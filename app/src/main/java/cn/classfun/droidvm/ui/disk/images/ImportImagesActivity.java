@@ -299,6 +299,12 @@ public final class ImportImagesActivity extends AppCompatActivity {
             return;
         }
         inputFolder.setError(null);
+        // Reject path traversal in the chosen file name: it must denote a
+        // single path segment inside the chosen folder, never escape it.
+        if (name.contains("/") || name.contains("\\") || name.contains("..")) {
+            inputFilename.setError(getString(R.string.import_url_error_name_invalid));
+            return;
+        }
         var destPath = pathJoin(folder, name);
         if (new File(destPath).exists()) {
             inputFilename.setError(getString(R.string.images_error_file_exists));

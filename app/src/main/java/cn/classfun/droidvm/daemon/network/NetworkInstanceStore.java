@@ -4,6 +4,7 @@ import static cn.classfun.droidvm.lib.store.network.NetworkState.RUNNING;
 import static cn.classfun.droidvm.lib.store.network.NetworkState.STARTING;
 import static cn.classfun.droidvm.lib.store.network.NetworkState.STOPPED;
 import static cn.classfun.droidvm.lib.utils.StringUtils.fmt;
+import cn.classfun.droidvm.lib.utils.StringUtils;
 
 import android.util.Log;
 
@@ -53,7 +54,7 @@ public final class NetworkInstanceStore extends DataStore<NetworkInstance> {
                 var migrated = NetworkConfig.migrate(entry);
                 if (migrated == null) {
                     Log.w(TAG, "Skipping network config with unsupported schema: "
-                        + entry.optString("name"));
+                        + StringUtils.sanitizeForLog(entry.optString("name")));
                     return;
                 }
                 if (migrated != entry) {
@@ -64,7 +65,7 @@ public final class NetworkInstanceStore extends DataStore<NetworkInstance> {
                         NetworkConfigValidator.validate(new NetworkConfig(migrated));
                     } catch (Exception e) {
                         Log.w(TAG, "Skipping legacy network that failed migration/validation: "
-                            + entry.optString("name"), e);
+                            + StringUtils.sanitizeForLog(entry.optString("name")), e);
                         return;
                     }
                 }

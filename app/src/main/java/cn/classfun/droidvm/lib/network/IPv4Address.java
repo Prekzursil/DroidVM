@@ -38,6 +38,7 @@ public final class IPv4Address
         };
     }
 
+    @Override
     public Long value() {
         return value;
     }

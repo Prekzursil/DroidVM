@@ -261,7 +261,11 @@ public final class HugePageActivity extends AppCompatActivity {
     private long getPages(@NonNull Map<String, String> stats, @NonNull String key) {
         var value = stats.get(key);
         if (value == null) return 0;
-        return Long.parseLong(value);
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     private void updateUI(

@@ -71,7 +71,7 @@ final class DisplayProvider {
         });
 
         mainView.setSurfaceLifecycle(SurfaceView.SURFACE_LIFECYCLE_FOLLOWS_ATTACHMENT);
-        mainView.getHolder().addCallback(new Callback());
+        mainView.getHolder().addCallback(new SurfaceCallback());
 
         var surface = mainView.getHolder().getSurface();
         if (surface != null && surface.isValid()) {
@@ -177,7 +177,7 @@ final class DisplayProvider {
         }
     }
 
-    private final class Callback implements SurfaceHolder.Callback {
+    private final class SurfaceCallback implements SurfaceHolder.Callback {
         @Override
         public void surfaceCreated(@NonNull SurfaceHolder holder) {
             holder.setFixedSize(width, height);

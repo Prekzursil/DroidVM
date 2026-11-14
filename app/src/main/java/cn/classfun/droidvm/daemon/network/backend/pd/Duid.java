@@ -32,8 +32,14 @@ public final class Duid {
     public static byte[] parse(@NonNull String hex) {
         var parts = hex.split(":");
         var out = new byte[parts.length];
-        for (int i = 0; i < parts.length; i++)
-            out[i] = (byte) Integer.parseInt(parts[i], 16);
+        for (int i = 0; i < parts.length; i++) {
+            try {
+                out[i] = (byte) Integer.parseInt(parts[i], 16);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(
+                    "Invalid DUID hex component: " + parts[i], e);
+            }
+        }
         return out;
     }
 

@@ -1,6 +1,7 @@
 package cn.classfun.droidvm.lib.store.network;
 
 import android.util.Log;
+import cn.classfun.droidvm.lib.utils.StringUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,7 +58,7 @@ public class NetworkConfig extends DataConfig {
         try {
             return migrateLegacyToV2(obj);
         } catch (Exception e) {
-            Log.w(TAG, "Failed to migrate legacy network config: " + obj.optString("name"), e);
+            Log.w(TAG, "Failed to migrate legacy network config: " + StringUtils.sanitizeForLog(obj.optString("name")), e);
             return null;
         }
     }

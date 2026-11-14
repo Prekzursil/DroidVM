@@ -134,6 +134,12 @@ public final class VMNetEditAdapter extends CardItemAdapter<VMNetEditViewHolder>
                 } else if (id == 4095) {
                     id = 0;  // gvisor: leaving trunk starts at untagged
                 }
+                // Reject out-of-range user input instead of truncating it
+                // through the narrowing long -> int cast below.
+                if (id < 0 || id > 4095) {
+                    applyVlanFieldState(holder, null);
+                    return;
+                }
                 items.get(pos).set("vlan_id", id);
                 applyVlanFieldState(holder, (int) id);
                 validateVlanField(holder, linux, id);

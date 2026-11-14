@@ -29,7 +29,7 @@ import java.net.Inet6Address;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
-import java.net.URL;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -98,7 +98,7 @@ public final class NetUtils {
             Log.w(TAG, "Failed to create cache directory");
         var cacheFile = new File(cacheDir, key);
         boolean exists = cacheFile.exists() && cacheFile.isFile();
-        var conn = (HttpURLConnection) new URL(url).openConnection();
+        var conn = (HttpURLConnection) URI.create(url).toURL().openConnection();
         try {
             conn.setConnectTimeout(15000);
             conn.setReadTimeout(60000);
@@ -197,7 +197,7 @@ public final class NetUtils {
             }
         }
         try {
-            var path = new URL(urlStr).getPath();
+            var path = URI.create(urlStr).toURL().getPath();
             if (path != null && !path.isEmpty())
                 return sanitizeFileName(basename(path));
         } catch (Exception ignored) {

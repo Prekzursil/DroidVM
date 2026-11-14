@@ -388,8 +388,8 @@ public final class MainSettingsFragment extends MainBaseFragment {
         @NonNull JSONObject json
     ) throws Exception {
         var ctx = requireContext().getApplicationContext();
-        var oldStore = store.newInstance();
-        var newStore = store.newInstance();
+        var oldStore = store.getDeclaredConstructor().newInstance();
+        var newStore = store.getDeclaredConstructor().newInstance();
         oldStore.load(ctx);
         newStore.load(json);
         newStore.forEach((k, v) -> {

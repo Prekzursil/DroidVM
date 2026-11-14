@@ -36,7 +36,7 @@ public final class AuthHandler extends RequestHandler {
     public void handle(@NonNull ClientRequest request) throws Exception {
         var j = request.getParams();
         var clientId = request.getClient().getId();
-        var token = j.getString("token");
+        var requestToken = j.getString("token");
         var tokenPath = new File(getTokenFile());
         if (!tokenPath.exists())
             throw new RequestException("Token file not found");
@@ -46,7 +46,7 @@ public final class AuthHandler extends RequestHandler {
                 throw new RequestException("Invalid token file");
             this.token = tokenLocal;
         }
-        if (!token.equals(this.token))
+        if (!requestToken.equals(this.token))
             throw new RequestException("Token mismatch");
         request.getClient().authorized = true;
         Log.i(TAG, fmt("Client %s authenticated successfully", clientId));

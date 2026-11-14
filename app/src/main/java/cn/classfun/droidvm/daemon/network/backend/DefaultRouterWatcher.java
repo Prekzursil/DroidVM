@@ -217,7 +217,13 @@ public final class DefaultRouterWatcher {
             if (r.optBoolean("detached", false)) detached.add(dev);
         }
         installed.values().forEach(specs -> specs.sort(Comparator.comparingInt(
-            s -> Integer.parseInt(s.substring(0, s.indexOf(' '))))));
+            s -> {
+                try {
+                    return Integer.parseInt(s.substring(0, s.indexOf(' ')));
+                } catch (NumberFormatException e) {
+                    return Integer.MAX_VALUE;
+                }
+            })));
 
         // A device is already correct iff it is still desired, has no detached
         // rule, and its installed specs equal the desired chain (same tables AND
@@ -235,8 +241,12 @@ public final class DefaultRouterWatcher {
                 dev, specs, ipv6 ? 6 : 4));
             for (var spec : specs) {
                 int sp = spec.indexOf(' ');
-                ruleDel(ipv6, dev, spec.substring(sp + 1),
-                    Integer.parseInt(spec.substring(0, sp)));
+                try {
+                    ruleDel(ipv6, dev, spec.substring(sp + 1),
+                        Integer.parseInt(spec.substring(0, sp)));
+                } catch (NumberFormatException e) {
+                    Log.w(TAG, "Skipping malformed installed rule spec: " + spec, e);
+                }
             }
         });
 

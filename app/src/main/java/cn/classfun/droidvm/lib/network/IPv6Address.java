@@ -32,6 +32,7 @@ public final class IPv6Address
     }
 
     @NonNull
+    @Override
     public BigInteger value() {
         return value;
     }
@@ -89,6 +90,7 @@ public final class IPv6Address
     }
 
     @NonNull
+    @Override
     public IPv6Address add(@NonNull BigInteger delta) {
         return new IPv6Address(value.add(delta));
     }
