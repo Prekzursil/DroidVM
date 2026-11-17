@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import cn.classfun.droidvm.BuildConfig;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -117,8 +118,9 @@ public abstract class BaseVncActivity extends AppCompatActivity implements ImeIn
     @SuppressWarnings("unused")
     protected abstract void onBitmapUpdated(@NonNull Bitmap bitmap);
 
-    @SuppressWarnings("unused")
     protected void onStatusChanged(String text, VncStatus status) {
+        if (BuildConfig.DEBUG)
+            Log.v(TAG, "onStatusChanged: " + text + " (" + status + ")");
     }
 
     @SuppressWarnings("unused")

@@ -130,7 +130,7 @@ public final class VMActions {
                     mainHandler.post(proceed);
                 else
                     mainHandler.post(() ->
-                        promptConvert(config, ui, convertLauncher, compressed, proceed));
+                        promptConvert(ui, convertLauncher, compressed, proceed));
             })
             .onUnsuccessful(resp -> mainHandler.post(proceed))
             .onError(e -> {
@@ -141,7 +141,6 @@ public final class VMActions {
     }
 
     private static void promptConvert(
-        @NonNull VMConfig config,
         @NonNull UIContext ui,
         @NonNull ConvertLauncher convertLauncher,
         @NonNull JSONArray compressed,

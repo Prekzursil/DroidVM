@@ -249,14 +249,9 @@ public final class DataItem implements JSONSerialize, Iterable<DataItem.Iter> {
         asObject().put(key, new DataItem(value));
     }
 
-    public void set(int index, @Nullable DataItem value) {
+    public void setAt(int index, @Nullable DataItem value) {
         check(Type.ARRAY);
         asArray().set(index, new DataItem(value));
-    }
-
-    public <E extends Enum<E>> void set(@NonNull String key, @Nullable Enum<E> value) {
-        if (value == null) set(key, newNull());
-        else set(key, value.name().toLowerCase());
     }
 
     public void set(@NonNull String key, @Nullable Object value) {
@@ -384,14 +379,13 @@ public final class DataItem implements JSONSerialize, Iterable<DataItem.Iter> {
             return newNull();
         } else if (val instanceof Boolean) {
             return newBoolean((boolean) val);
-        } else if (val instanceof Integer) {
-            return newInteger(((Integer) val).longValue());
-        } else if (val instanceof Long) {
-            return newInteger((Long) val);
-        } else if (val instanceof Float) {
-            return newFloat(((Float) val).doubleValue());
-        } else if (val instanceof Double) {
-            return newFloat((Double) val);
+        } else if (val instanceof Number) {
+            // Integer/Long -> integer cell; Float/Double -> float cell
+            // (grouped: one instanceof chain level instead of four).
+            if (val instanceof Integer || val instanceof Long) {
+                return newInteger(((Number) val).longValue());
+            }
+            return newFloat(((Number) val).doubleValue());
         } else if (val instanceof String) {
             return newString((String) val);
         } else if (val instanceof JSONArray) {
