@@ -182,7 +182,7 @@ public abstract class DataStore<T extends DataConfig> implements JSONSerialize {
         var idx = idMap.get(config.getId());
         if (idx == null)
             throw new IllegalStateException(fmt("Config does not exists: %s", config.getId()));
-        dataMap.setAt(idx, config);
+        dataMap.set(idx, config);
         refreshIndex();
     }
 
