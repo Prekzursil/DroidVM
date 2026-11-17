@@ -382,10 +382,25 @@ public final class DataItem implements JSONSerialize, Iterable<DataItem.Iter> {
         } else if (val instanceof Number) {
             // Integer/Long -> integer cell; Float/Double -> float cell
             // (grouped: one instanceof chain level instead of four).
+            // BigInteger/BigDecimal are also Numbers - they keep their own
+            // overflow-checked conversions instead of degrading to doubles.
             if (val instanceof Integer || val instanceof Long) {
                 return newInteger(((Number) val).longValue());
             }
-            return newFloat(((Number) val).doubleValue());
+            if (val instanceof Float || val instanceof Double) {
+                return newFloat(((Number) val).doubleValue());
+            }
+            if (val instanceof BigInteger) {
+                var bi = (BigInteger) val;
+                if (bi.bitLength() > 63) throw new IllegalArgumentException(fmt(
+                    "BigInteger value too large for integer type: %s", bi
+                ));
+                return newInteger(bi.longValue());
+            }
+            if (val instanceof BigDecimal) {
+                var bd = (BigDecimal) val;
+                return newFloat(bd.doubleValue());
+            }
         } else if (val instanceof String) {
             return newString((String) val);
         } else if (val instanceof JSONArray) {
@@ -426,15 +441,8 @@ public final class DataItem implements JSONSerialize, Iterable<DataItem.Iter> {
             return newString(((Enum<?>) val).name());
         } else if (val instanceof CharSequence) {
             return newString(val.toString());
-        } else if (val instanceof BigInteger) {
-            var bi = (BigInteger) val;
-            if (bi.bitLength() > 63) throw new IllegalArgumentException(fmt(
-                "BigInteger value too large for integer type: %s", bi
-            ));
-            return newInteger(bi.longValue());
-        } else if (val instanceof BigDecimal) {
-            return newFloat(((BigDecimal) val).doubleValue());
         } else if (val instanceof Number) {
+            // Any other Number subtype (e.g. AtomicInteger): long value.
             return newInteger(((Number) val).longValue());
         } else if (val instanceof UUID) {
             return newString(val.toString());
