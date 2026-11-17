@@ -347,6 +347,19 @@ public final class ImportURLActivity extends AppCompatActivity {
             return;
         }
         var destPath = pathJoin(folder, name);
+        // Defense in depth against path injection: canonicalize and require
+        // the destination to stay INSIDE the chosen folder (java/path-injection).
+        try {
+            var destRoot = new File(folder).getCanonicalFile();
+            var destFile = new File(destPath).getCanonicalFile();
+            if (!destFile.getPath().startsWith(destRoot.getPath() + File.separator)) {
+                inputFilename.setError(getString(R.string.import_url_error_name_invalid));
+                return;
+            }
+        } catch (java.io.IOException e) {
+            inputFilename.setError(getString(R.string.import_url_error_name_invalid));
+            return;
+        }
         if (new File(destPath).exists()) {
             inputFilename.setError(getString(R.string.import_url_error_file_exists));
             return;
@@ -369,7 +382,7 @@ public final class ImportURLActivity extends AppCompatActivity {
         // enqueue() resolves redirects (network I/O), so run it off the main thread.
         runOnPool(() -> {
             long id = DiskDownloadManager.enqueue(
-                this, url, USER_AGENT, folder, name, ImportURLActivity.class);
+                url, USER_AGENT, folder, name, ImportURLActivity.class);
             runOnUiThread(() -> onDownloadEnqueued(id));
         });
     }

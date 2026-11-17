@@ -128,7 +128,6 @@ public final class DiskDownloadManager {
      * {@link DiskDownloadService} for this id, which runs the download.
      */
     public static long enqueue(
-        @NonNull Context context,
         @NonNull String url,
         @NonNull String userAgent,
         @NonNull String folder,

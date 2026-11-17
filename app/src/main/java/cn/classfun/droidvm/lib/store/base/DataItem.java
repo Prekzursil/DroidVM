@@ -249,14 +249,9 @@ public final class DataItem implements JSONSerialize, Iterable<DataItem.Iter> {
         asObject().put(key, new DataItem(value));
     }
 
-    public void set(int index, @Nullable DataItem value) {
+    public void setAt(int index, @Nullable DataItem value) {
         check(Type.ARRAY);
         asArray().set(index, new DataItem(value));
-    }
-
-    public <E extends Enum<E>> void set(@NonNull String key, @Nullable Enum<E> value) {
-        if (value == null) set(key, newNull());
-        else set(key, value.name().toLowerCase());
     }
 
     public void set(@NonNull String key, @Nullable Object value) {
@@ -384,14 +379,30 @@ public final class DataItem implements JSONSerialize, Iterable<DataItem.Iter> {
             return newNull();
         } else if (val instanceof Boolean) {
             return newBoolean((boolean) val);
-        } else if (val instanceof Integer) {
-            return newInteger(((Integer) val).longValue());
-        } else if (val instanceof Long) {
-            return newInteger((Long) val);
-        } else if (val instanceof Float) {
-            return newFloat(((Float) val).doubleValue());
-        } else if (val instanceof Double) {
-            return newFloat((Double) val);
+        } else if (val instanceof Number) {
+            // Integer/Long -> integer cell; Float/Double -> float cell
+            // (grouped: one instanceof chain level instead of four).
+            // BigInteger/BigDecimal are also Numbers - they keep their own
+            // overflow-checked conversions instead of degrading to doubles.
+            if (val instanceof Integer || val instanceof Long) {
+                return newInteger(((Number) val).longValue());
+            }
+            if (val instanceof Float || val instanceof Double) {
+                return newFloat(((Number) val).doubleValue());
+            }
+            if (val instanceof BigInteger) {
+                var bi = (BigInteger) val;
+                if (bi.bitLength() > 63) throw new IllegalArgumentException(fmt(
+                    "BigInteger value too large for integer type: %s", bi
+                ));
+                return newInteger(bi.longValue());
+            }
+            if (val instanceof BigDecimal) {
+                var bd = (BigDecimal) val;
+                return newFloat(bd.doubleValue());
+            }
+            // Any other Number subtype (e.g. AtomicInteger): long value.
+            return newInteger(((Number) val).longValue());
         } else if (val instanceof String) {
             return newString((String) val);
         } else if (val instanceof JSONArray) {
@@ -432,16 +443,6 @@ public final class DataItem implements JSONSerialize, Iterable<DataItem.Iter> {
             return newString(((Enum<?>) val).name());
         } else if (val instanceof CharSequence) {
             return newString(val.toString());
-        } else if (val instanceof BigInteger) {
-            var bi = (BigInteger) val;
-            if (bi.bitLength() > 63) throw new IllegalArgumentException(fmt(
-                "BigInteger value too large for integer type: %s", bi
-            ));
-            return newInteger(bi.longValue());
-        } else if (val instanceof BigDecimal) {
-            return newFloat(((BigDecimal) val).doubleValue());
-        } else if (val instanceof Number) {
-            return newInteger(((Number) val).longValue());
         } else if (val instanceof UUID) {
             return newString(val.toString());
         } else if (val instanceof Date) {

@@ -24,8 +24,8 @@ public final class VersionCheck {
         default void onNoUpdate() {
         }
 
-        @SuppressWarnings("unused")
         default void onError(@NonNull Exception e) {
+            android.util.Log.w("VersionCheck", "version check failed", e);
         }
     }
 
