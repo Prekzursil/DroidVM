@@ -401,6 +401,8 @@ public final class DataItem implements JSONSerialize, Iterable<DataItem.Iter> {
                 var bd = (BigDecimal) val;
                 return newFloat(bd.doubleValue());
             }
+            // Any other Number subtype (e.g. AtomicInteger): long value.
+            return newInteger(((Number) val).longValue());
         } else if (val instanceof String) {
             return newString((String) val);
         } else if (val instanceof JSONArray) {
@@ -441,9 +443,6 @@ public final class DataItem implements JSONSerialize, Iterable<DataItem.Iter> {
             return newString(((Enum<?>) val).name());
         } else if (val instanceof CharSequence) {
             return newString(val.toString());
-        } else if (val instanceof Number) {
-            // Any other Number subtype (e.g. AtomicInteger): long value.
-            return newInteger(((Number) val).longValue());
         } else if (val instanceof UUID) {
             return newString(val.toString());
         } else if (val instanceof Date) {
